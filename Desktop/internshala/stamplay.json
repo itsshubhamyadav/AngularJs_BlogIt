@@ -1,0 +1,10 @@
+{
+  "appId": "shubham1997",
+  "apiKey": "91b29cde716f620c7b47772b997d1c2d4254e0dbd8335799fb480c0105e1858a",
+  "public": "./",
+  "ignore": [
+    "stamplay.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}

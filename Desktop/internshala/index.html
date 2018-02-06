@@ -1,0 +1,32 @@
+<!DOCTYPE HTML> 
+<html ng-app="MyApp"> 
+<head>  
+<title>Example</title>
+
+<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" >
+
+<script rel="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+<script rel="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script rel="text/javascript" src="bower_components/stamplay-js-sdk/dist/stamplay.min.js"></script>
+<script rel="text/javascript" src="bower_components/angular/angular.min.js"></script>
+
+
+<script rel="text/javascript" src="app.js"></script>
+<script rel="text/javascript" src="bower_components\angular-ui-router\release\angular-ui-router.min.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</head> 
+<body ng-controller="MyCtrl"> 
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                  <div ng-include="'structure/menu.html'"></div>
+    </div>    
+    </nav>
+    
+        <div ng-include="'structure/content.html'"></div>
+        <div ng-include="'structure/jumbotron.html'"></div>
+        <div ui-view></div>
+        
+</body> 
+ </html>
