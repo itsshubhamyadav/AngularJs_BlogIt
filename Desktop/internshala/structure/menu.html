@@ -11,13 +11,16 @@
 
 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 <ul class="nav navbar-nav">
-<li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+<li class="active"><a href="#/">Home <span class="sr-only">(current)</span></a></li>
 <li ng-if="!loggedIn"><a href="#/login">Login</a></li>
 <li ng-if="!loggedIn"><a href="#/signup">Signup</a></li>
 <li class="dropdown" ng-if="loggedIn">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ displayName }}<span class="caret"></span></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Blogs<span class="caret"></span></a>
 <ul class="dropdown-menu">
-<li><a href="/home" ng-click="logout()">Logout</a></li>
+    <li><a href="#/create" >Create blogs</li>
+      <li><a href="#/myBlogs" >View Blogs</li>
+        <li><a href="#" >Somthing else here</li>
+<li><a href="#/" ng-click="logout()">Logout</a></li>
 </ul>
 </li>
 </ul>

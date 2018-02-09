@@ -1,29 +1,37 @@
 <!DOCTYPE HTML> 
 <html ng-app="MyApp"> 
 <head>  
-<title>Example</title>
+<title>Blog It</title>
 
 <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" >
+<link rel="stylesheet" type="text/css" href="bower_components/ngToast/dist/ngToast-animations.min.css" >
+<link rel='stylesheet' href='bower_components/textAngular/dist/textAngular.css'>
+<link rel='stylesheet' href='bower_components/font-awesome/web-fonts-with-css/css/fontawesome.min.css'>
 
 <script rel="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 <script rel="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script rel="text/javascript" src="bower_components/stamplay-js-sdk/dist/stamplay.min.js"></script>
 <script rel="text/javascript" src="bower_components/angular/angular.min.js"></script>
 <script rel="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-
+<script rel="text/javascript" src="bower_components/ngToast/dist/ngToast.min.js"></script>
+<script rel="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script rel="text/javascript" src='bower_components/textAngular/dist/textAngular-rangy.min.js'></script>
+<script rel="text/javascript" src='bower_components/textAngular/dist/textAngular-sanitize.min.js'></script>
+<script rel="text/javascript" src='bower_components/textAngular/dist/textAngular.min.js'></script>
 <script rel="text/javascript" src="app.js"></script>
 
 <link rel="stylesheet" type="text/css" href="style.css">
 
 </head> 
 <body ng-controller="MainCtrl"> 
+        
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                   <!-- Brand and toggle get grouped for better mobile display -->
                   <div ng-include="'structure/menu.html'"></div>
     </div>    
     </nav>
-    
+    <center><toast></toast></center>
         <div ng-include="'structure/content.html'"></div>
         <div ng-include="'structure/jumbotron.html'"></div>
         <div ui-view></div>
