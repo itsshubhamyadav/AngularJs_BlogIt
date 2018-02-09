@@ -1,5 +1,20 @@
 var app = angular.module('MyApp' , ['ui.router']);
 
+app.run(function($rootScope){
+    Stamplay.User.currentUser()
+    .then(function(res){
+        if(res.user){
+            $rootScope.loggedIn = true;
+            console.log($rootScope.loggedIn);
+        }else{
+            $rootScope.loggedIn = false;
+            console.log($rootScope.loggedIn);
+        }
+    },function(err){
+        console.log("An error occured while getting current user!")
+    });
+});
+
 app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
     $urlRouterProvider.otherwise("/");
     Stamplay.init("shubham1997");
@@ -16,6 +31,11 @@ app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
             templateUrl: 'template/login.html',
             controller: "LoginCtrl"
         })
+        .state('MyBlogs', {
+            url: '/myBlogs',
+            templateUrl: 'template/myBlogs.html',
+            controller: "MyBlogsCtrl"
+        })
         .state('signup', {
             url: '/signup',
             templateUrl: 'template/signup.html',
@@ -29,28 +49,39 @@ app.controller('HomeCtrl',function($scope){
     
 });
 
-app.controller('LoginCtrl', function($scope) {
+app.controller('MyBlogsCtrl',function($scope){
+    
+});
+
+app.controller('LoginCtrl', function($scope , $state , $timeout , $rootScope) {
 	$scope.login = function(){
 		Stamplay.User.currentUser()
 		.then(function(res){
 			console.log(res);
 			
 			if(res.user){
+                $rootScope.loggedIn = true;
+                $rootScope.displayName = res.user.firstName+" "+res.user.lastName; 
 				$timeout(function(){
-					$location.path("/viewBlogs");
+                    $state.go('MyBlogs');
+                    
+					
 				});
 			}
 			else{
 				Stamplay.User.login($scope.user)
 				.then(function(res){
-					console.log("logged In "+res);
+                    console.log("logged In "+res);
+                    $rootScope.loggedIn = true;
+                    $rootScope.displayName = res.user.firstName+" "+res.user.lastName;
 					$timeout(function(){
-						$location.path("/viewBlogs")
+                    $state.go('MyBlogs');	
 					});
 				})
 			}
 		},function(error){
-			console.log(error);
+            console.log(error);
+            $rootScope.loggedIn = false;
 		})
 	}
 });
@@ -81,8 +112,17 @@ app.controller('SignUpCtrl',function($scope){
     }
 });
 
-app.controller('MyCtrl',function($scope){
-    
+app.controller('MainCtrl',function($scope){
+    $scope.logout = function(){
+        console.log("Logout called");
+        Stamplay.User.logout(true, function(){
+            console.log("Logged out!");
+
+            $timeout(function(){
+                $rootScope.loggedIn = false;
+            })
+        });
+    }
 });
 
 app.controller('MyBlogCtrl',function($scope){
