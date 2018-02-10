@@ -1,19 +1,63 @@
 var app = angular.module('MyApp' , ['ui.router','ngToast','textAngular','ngSanitize']);
 
-app.run(function($rootScope){
-    Stamplay.User.currentUser()
-    .then(function(res){
-        if(res.user){
-            $rootScope.loggedIn = true;
-            console.log($rootScope.loggedIn);
-        }else{
-            $rootScope.loggedIn = false;
-            console.log($rootScope.loggedIn);
+app.run(function($rootScope , AuthService, $state, $transitions){
+     // $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+    //     if(toState.authenticate == true)
+    //     {
+    //         AuthService.isAuthenticated()
+    //         .then(function(res){
+    //             console.log(res);
+    //             if(res == false)
+    //             {
+    //                 $state.go('login');
+    //             }
+    //         });
+    //     }
+    // })
+    
+    $transitions.onStart({}, function(transition){
+        if(transition.$to().self.authenticate == true){
+            AuthService.isAuthenticated()
+            .then(function(res){
+                console.log(res);
+                if(res == false)
+                {
+                    $state.go('#/login');
+                }
+            });
         }
-    },function(err){
-        console.log("An error occured while getting current user!")
-    });
+    })
 });
+
+app.factory('AuthService',function($q , $rootScope){
+    return{
+        isAuthenticated : function(){
+            var defer=$q.defer();
+
+            Stamplay.User.currentUser(function(err , res){
+                if(err){
+                    defer.resolve(false);
+                    $rootScope.loggedIn = false;
+                }
+                if(res.useer){
+                    defer.resolve(true);
+                    $rootScope.loggedIn = true;
+                }
+                else{
+                    $rootScope.loggedIn = false;
+                    defer.resolve(false);
+                }
+            });
+            return defer.promise;
+        }
+    }
+})
+
+app.filter('htmlToPlainText',function(){
+    return function(text){
+        return text? String(text).replace(/<[^>]+/gm,'') : '';
+    }
+})
 
 app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
     $urlRouterProvider.otherwise("/");
@@ -34,17 +78,20 @@ app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
         .state('MyBlogs', {
             url: '/myBlogs',
             templateUrl: 'template/myBlogs.html',
-            controller: "MyBlogsCtrl"
+            controller: "MyBlogsCtrl",
+            authenticate : true
         })
         .state('Create', {
             url: '/create',
             templateUrl: 'template/create.html',
-            controller: "CreateCtrl"
+            controller: "CreateCtrl",
+            authenticate : true
         })
         .state('Edit', {
             url: '/edit/:id',
             templateUrl: 'template/edit.html',
-            controller: "EditCtrl"
+            controller: "EditCtrl",
+            authenticate : true
         })
         .state('signup', {
             url: '/signup',

@@ -1,3 +1,6 @@
+<div>
+        <div ng-include="'structure/jumbotron.html'"></div>
+</div>
 <div ng-controller="MyBlogsCtrl">
         <h1>My Blogs Post</h1>
         <div class="row">
@@ -6,7 +9,7 @@
                     <div class="col-3 col-sm-4 col-xs-12" ng-repeat="blog in userBlogs" style="height:214px;">
                         <div class="panel panel-default panel-primary">
                             <div class="panel-heading">{{blog.title}}</div>
-                            <div class="panel-body" ng-bind-html="blog.content | limitTo:100"></div>
+                            <div class="panel-body" ng-bind-html="blog.content | htmlToPlainText | limitTo:100"></div>
                             <div class="panel-footer">
                                 <div class="row">
                                     <div class="col-md-6">
