@@ -4,7 +4,10 @@
         <input type = "text" ng-model="newPost.title" class="form-control input-lg" placeholder="Post title here.">
     </div>
     <div class="form-group">
-            <text-angular ng-model="htmlVariable"></text-angular>
+            <text-angular ng-model="newPost.content"></text-angular>
     </div>
-    <button class="btn btn-primary pull-right">Publish</button>
+    <button class="btn btn-primary pull-right" ng-click="create()">Publish</button>
+</div>
+<div class="col-md-4">
+    <div ng-bind-html="newPost.content"></div>
 </div>

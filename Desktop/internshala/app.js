@@ -1,4 +1,4 @@
-var app = angular.module('MyApp' , ['ui.router','ngToast','textAngular']);
+var app = angular.module('MyApp' , ['ui.router','ngToast','textAngular','ngSanitize']);
 
 app.run(function($rootScope){
     Stamplay.User.currentUser()
@@ -41,6 +41,11 @@ app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
             templateUrl: 'template/create.html',
             controller: "CreateCtrl"
         })
+        .state('Edit', {
+            url: '/edit/:id',
+            templateUrl: 'template/edit.html',
+            controller: "EditCtrl"
+        })
         .state('signup', {
             url: '/signup',
             templateUrl: 'template/signup.html',
@@ -50,21 +55,119 @@ app.config(function($stateProvider , $urlRouterProvider, $locationProvider){
     
 });
 
-app.controller('CreateCtrl',function(taOptions){
+app.controller('CreateCtrl',function(taOptions , $state, $scope,$timeout,ngToast){
+
+    $scope.newPost = {};
     taOptions.toolbar = [
         ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
         ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
         ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
         ['html', 'insertImage','insertLink', 'insertVideo', 'wordcount', 'charcount']
     ];
+
+    $scope.create = function(){
+        Stamplay.User.currentUser()
+        .then(function(res){
+            if(res.user){
+                Stamplay.Object("blogs").save($scope.newPost)
+                .then(function(res){
+                    
+                    $timeout(function(){
+                        ngToast.create("The post has been successfully created.");
+                    })
+                    $scope.go("#/myBlogs");
+                },function(err){
+                    $timeout(function(){
+                        ngToast.create("An error has occured While creating an post. Please try later.");
+                    });
+                    console.log(err);
+                })
+            }else{
+                $state.go("#/login");    
+            }
+        },function(err){
+            $timeout(function(){
+                ngToast.create("An error has occured. Please try later.");
+            })
+        })
+    }
 });
 
-app.controller('HomeCtrl',function($scope){
-    
+app.controller('EditCtrl',function(taOptions , $state, $scope, $stateParams, $timeout, ngToast){
+
+    $scope.Post = {};
+    taOptions.toolbar = [
+        ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
+        ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+        ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+        ['html', 'insertImage','insertLink', 'insertVideo', 'wordcount', 'charcount']
+    ];
+
+    Stamplay.Object("blogs").get({_id:$stateParams.id})
+    .then(function(res){
+        console.log(res);
+        $scope.Post = res.data[0];
+        $scope.$apply();
+        console.log($scope.Post);
+    },function(err){
+        console.log(err);
+    });
+    $scope.update = function(){
+        Stamplay.User.currentUser()
+        .then(function(res){
+            if(res.user){
+                if(res.user._id == $scope.Post.owner){
+                    Stamplay.Object("blogs").update($stateParams.id,$scope.Post)
+                    .then(function(response){
+                        console.log("response");
+                        $state.go("MyBlogs");
+                    },function(error){
+                        console.log(error);
+                    });
+                }
+                else
+                    $state.go("login");
+            }           
+            else
+                $state.go("login");
+        },function(err){
+            console.log(err);
+        });
+    }
+
 });
 
-app.controller('MyBlogsCtrl',function($scope){
-    
+app.controller('HomeCtrl',function($scope, $http){
+        Stamplay.Object("blogs").get({sort : "-dt_create"})
+        .then(function(res){
+            console.log(res);
+            $scope.latestBlogs = res.data;
+            $scope.$apply();
+            console.log($scope.latestBlogs);
+        },function(err){
+            console.log(err);
+        });
+});
+
+app.controller('MyBlogsCtrl',function($scope,$http){
+    Stamplay.User.currentUser().then(function(res){
+        if(res.user){
+        Stamplay.Object("blogs").get({owner : res.user._id , sort : "-dt_create"})
+        .then(function(res){
+            console.log(res);
+            $scope.userBlogs = res.data;
+            $scope.$apply();
+            console.log($scope.userBlogs);
+        },function(err){
+            console.log(err);
+        });
+    }
+    else{
+        $state.go('#/login');
+    }
+    },function(err){
+        console.log(err);
+    })
 });
 
 app.controller('LoginCtrl', function($scope , $state , $timeout , $rootScope, ngToast) {
@@ -152,8 +255,4 @@ app.controller('MainCtrl',function($scope, $rootScope, $timeout){
             })
         });
     }
-});
-
-app.controller('MyBlogCtrl',function($scope){
-    
 });
